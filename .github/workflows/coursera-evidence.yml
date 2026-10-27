@@ -13,6 +13,8 @@ jobs:
       DEMO_PASSWORD: DemoOnlyPass123!
       ADMIN_PASSWORD: DemoAdminPass123!
       PYTHONUNBUFFERED: '1'
+      DJANGO_SERVE_REACT: '1'
+      FRONT_URL: http://127.0.0.1:8000
     defaults:
       run:
         working-directory: best-cars-dealership
@@ -33,6 +35,7 @@ jobs:
           cd server/frontend
           npm install --no-audit --no-fund
           npm install --no-save playwright
+          npm run build
           npx playwright install chromium --with-deps
           sudo apt-get install -y xvfb scrot
       - name: Prepare a temporary demo database
