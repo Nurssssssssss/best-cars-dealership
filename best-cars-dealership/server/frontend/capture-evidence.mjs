@@ -60,7 +60,7 @@ try{
  try{
   await page.waitForTimeout(1300);
   const ids=execFileSync('xdotool',['search','--name','Real running Django server'],{encoding:'utf-8'}).trim().split('\\n');
-  execFileSync('xdotool',['windowactivate','--sync',ids.at(-1)]);
+  execFileSync('xdotool',['windowfocus','--sync',ids.at(-1)]);
   await page.waitForTimeout(350);
   execFileSync('scrot',['-u',resolve(out,'django_server.png')]);
   console.log('Captured real terminal with Django startup log');
