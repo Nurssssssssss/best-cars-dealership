@@ -15,6 +15,10 @@ LANGUAGE_CODE='en-us'; TIME_ZONE='UTC'; USE_I18N=True; USE_TZ=True
 STATIC_URL='/static/'
 STATIC_ROOT=BASE_DIR/'staticfiles'
 STATICFILES_DIRS=[BASE_DIR/'frontend'/'static']
+# When Vite has built frontend assets, collect them under /static/assets/.
+frontend_assets=BASE_DIR/'frontend'/'dist'/'assets'
+if frontend_assets.exists():
+ STATICFILES_DIRS.append(('assets',frontend_assets))
 DEFAULT_AUTO_FIELD='django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS=['http://localhost:5173','http://127.0.0.1:5173']
 CSRF_TRUSTED_ORIGINS=['http://localhost:5173','http://127.0.0.1:5173']
