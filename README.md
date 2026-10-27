@@ -28,3 +28,11 @@ The demo dealer data is synthetic. Screenshots from the temporary CI environment
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Nurssssssssss/best-cars-dealership)
 
 Click the button, review the service and approve deployment in your Render account. The included `render.yaml` requests a free Docker web service. On success, Render will show the actual `*.onrender.com` deployment URL. This action is separate from GitHub Actions and cannot be simulated by CI screenshots.
+
+After the public Render URL appears, capture Task 25–28 screenshots automatically:
+
+1. Open [GitHub Actions — Capture real public deployment screenshots](https://github.com/Nurssssssssss/best-cars-dealership/actions/workflows/capture-deployed.yml).
+2. Choose **Run workflow** and enter your real `https://...onrender.com` URL.
+3. Download the generated `coursera-real-deployment-evidence` ZIP artifact from the completed run. It contains `deployed_landingpage.png`, `deployed_loggedin.png`, `deployed_dealer_detail.png` and `deployed_add_review.png`. The workflow registers a new demonstration account and posts a sample review to the deployed test application.
+
+Only use screenshots generated from a genuinely published URL. GitHub CI localhost evidence is for Tasks 1–23, not proof of public deployment.
