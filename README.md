@@ -22,3 +22,9 @@ The complete application, installation steps, and API documentation are in [best
 GitHub Actions builds the code, exercises the API and creates actual browser screenshots of the temporary Django/React test environment. Open the **Actions** tab and download the `coursera-real-ci-evidence` artifact from a successful `Coursera genuine evidence` run.
 
 The demo dealer data is synthetic. Screenshots from the temporary CI environment are not screenshots of a publicly deployed application. A Render web service must be deployed separately to obtain a real public URL.
+
+## Deploy the working application
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Nurssssssssss/best-cars-dealership)
+
+Click the button, review the service and approve deployment in your Render account. The included `render.yaml` requests a free Docker web service. On success, Render will show the actual `*.onrender.com` deployment URL. This action is separate from GitHub Actions and cannot be simulated by CI screenshots.
