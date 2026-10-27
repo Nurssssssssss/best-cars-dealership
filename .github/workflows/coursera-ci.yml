@@ -41,5 +41,5 @@ jobs:
       - name: Run Linter
         run: |
           cd best-cars-dealership/server/frontend
-          npm ci
+          npm install --no-audit --no-fund
           npm run build
