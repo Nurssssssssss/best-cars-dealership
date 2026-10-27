@@ -1,0 +1,48 @@
+name: Coursera Variant 2 - genuine browser evidence
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    name: Capture actual live deployed pages and API
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: best-cars-dealership/server/frontend
+    env:
+      DEPLOY_URL: https://best-cars-dealership-coursera.onrender.com
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Chromium screenshot tools
+        run: |
+          npm install --no-audit --no-fund
+          npm install --no-save playwright
+          npx playwright install chromium --with-deps
+          sudo apt-get install -y xvfb scrot
+      - name: Verify deployed API responds
+        run: |
+          curl --retry 5 --retry-delay 5 --max-time 35 --fail --silent --show-error "$DEPLOY_URL/fetchDealers" > /tmp/actual-dealers.json
+          python - <<'PY'
+          import json
+          with open('/tmp/actual-dealers.json') as f:
+              dealers=json.load(f)
+          assert len(dealers)==50, f'Expected 50 test dealers, got {len(dealers)}'
+          print('Public Django server returned 50 demo dealerships')
+          PY
+      - name: Capture live browser screenshots
+        run: xvfb-run -a --server-args="-screen 0 1440x900x24" node capture-variant2.mjs
+      - name: Save evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coursera-variant2-real-public-screenshots
+          path: best-cars-dealership/evidence_variant2/
+          retention-days: 14
