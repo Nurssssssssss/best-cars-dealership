@@ -1,0 +1,23 @@
+# Deploy Django + built React UI using a Render Blueprint.
+# Database is ephemeral SQLite for educational demonstration only.
+services:
+  - type: web
+    name: best-cars-dealership-demo
+    runtime: docker
+    plan: free
+    dockerContext: best-cars-dealership
+    dockerfilePath: best-cars-dealership/Dockerfile
+    healthCheckPath: /fetchDealers
+    envVars:
+      - key: DEBUG
+        value: '0'
+      - key: DJANGO_SERVE_REACT
+        value: '1'
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        value: .onrender.com
+      - key: SECURE_COOKIES
+        value: '1'
+      - key: PORT
+        value: '8000'

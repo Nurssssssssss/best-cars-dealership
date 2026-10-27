@@ -1,0 +1,44 @@
+name: Docker deployment smoke test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  docker:
+    name: Build and exercise deployment image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Django and React image
+        run: docker build -f best-cars-dealership/Dockerfile -t best-cars-demo:test best-cars-dealership
+      - name: Start deployed container
+        run: |
+          docker run -d --name best-cars -p 8000:8000 \
+            -e DEBUG=0 \
+            -e DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1 \
+            -e DJANGO_SECRET_KEY=ci-temporary-smoke-test-key \
+            -e SECURE_COOKIES=0 best-cars-demo:test
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8000/fetchDealers >/dev/null; then break; fi
+            sleep 2
+          done
+      - name: Validate real static assets and API
+        run: |
+          curl -fsS http://127.0.0.1:8000/ > /tmp/landing.html
+          grep -q '/static/assets/' /tmp/landing.html
+          python - <<'PY'
+          import json, urllib.request
+          base='http://127.0.0.1:8000'
+          data=json.load(urllib.request.urlopen(base+'/fetchDealers'))
+          assert len(data)==50, len(data)
+          html=urllib.request.urlopen(base+'/').read().decode()
+          import re
+          js=re.search(r'/static/assets/[^" ]+\.js',html)
+          assert js, html[:400]
+          resource=urllib.request.urlopen(base+js.group()).read()
+          assert len(resource)>1000
+          print('Docker smoke passed: 50 dealers, HTML and compiled JavaScript served')
+          PY
+      - name: Show logs on failure
+        if: failure()
+        run: docker logs best-cars || true
