@@ -12,11 +12,26 @@ from .models import Dealer, Review, CarMake, CarModel
 from .views import sentiment
 
 
+# Approximate city-centre coordinates for the synthetic demo listings.
+CITY_CENTRES = {
+    "Wichita": (37.6872, -97.3301), "Topeka": (39.0473, -95.6752),
+    "Overland Park": (38.9822, -94.6708), "Denver": (39.7392, -104.9903),
+    "Chicago": (41.8781, -87.6298), "Austin": (30.2672, -97.7431),
+    "Dallas": (32.7767, -96.7970), "Seattle": (47.6062, -122.3321),
+    "Phoenix": (33.4484, -112.0740), "Miami": (25.7617, -80.1918),
+    "Boston": (42.3601, -71.0589), "Atlanta": (33.7490, -84.3880),
+    "New York": (40.7128, -74.0060), "San Francisco": (37.7749, -122.4194),
+    "Portland": (45.5152, -122.6784), "Los Angeles": (34.0522, -118.2437),
+}
+
 def dealer_data(d):
+    latitude, longitude = CITY_CENTRES.get(d.city, (None, None))
     return {
         "id": d.pk, "city": d.city, "state": d.state,
         "address": d.address, "zip": d.zip_code,
-        "lat": "", "long": "", "short_name": d.name,
+        "lat": str(latitude) if latitude is not None else None,
+        "long": str(longitude) if longitude is not None else None,
+        "short_name": d.name,
         "full_name": d.name,
     }
 
