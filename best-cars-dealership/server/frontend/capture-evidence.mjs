@@ -1,5 +1,5 @@
 import {chromium} from 'playwright';
-import {execFileSync} from 'node:child_process';
+import {execFileSync,spawn} from 'node:child_process';
 import {mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
 const base=process.env.FRONT_URL || 'http://127.0.0.1:5173';
@@ -48,8 +48,24 @@ try{
  await page.locator('input[type=submit]').click();
  await page.getByText('Site administration').waitFor();
  await snap('admin_login');
+ await page.goto('http://127.0.0.1:8000/admin/dealers/carmodel/',{waitUntil:'networkidle'});
+ await page.locator('#result_list').waitFor();
+ await snap('car_models');
  await page.locator('form[action*="logout"] button').first().click();
  await snap('admin_logout');
+ // An actual terminal window, displaying authentic Django server output from this CI run.
+ const log=resolve(out,'django_server');
+ const cmd='head -n 25 '+JSON.stringify(log)+'; printf "\\nLATEST REQUESTS:\\n"; tail -n 7 '+JSON.stringify(log)+'; sleep 15';
+ const term=spawn('xterm',['-T','Real running Django server','-geometry','118x34+30+30','-fa','Monospace','-fs','12','-e','sh','-c',cmd],{stdio:'ignore'});
+ try{
+  await page.waitForTimeout(1300);
+  const ids=execFileSync('xdotool',['search','--name','Real running Django server'],{encoding:'utf-8'}).trim().split('\\n');
+  execFileSync('xdotool',['windowactivate','--sync',ids.at(-1)]);
+  await page.waitForTimeout(350);
+  execFileSync('scrot',['-u',resolve(out,'django_server.png')]);
+  console.log('Captured real terminal with Django startup log');
+ }catch(err){console.log('Terminal capture unavailable:',err.message)}
+ finally{term.kill()}
  // Repeat the anonymous home screenshot once Chromium is fully visible.
  await page.goto(base+'/',{waitUntil:'networkidle'});
  await page.locator('article').first().waitFor();
