@@ -1,0 +1,42 @@
+name: Capture deployed Render screenshots (Coursera 25-28)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: best-cars-dealership/server/frontend
+    env:
+      DEPLOY_URL: https://best-cars-dealership-coursera.onrender.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install browser
+        run: |
+          npm install --no-audit --no-fund
+          npm install --no-save playwright
+          npx playwright install chromium --with-deps
+          sudo apt-get install -y xvfb scrot
+      - name: Verify live Django deployment
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 30 "$DEPLOY_URL/fetchDealers" >/tmp/render_dealers.json; then exit 0; fi
+            sleep 10
+          done
+          exit 1
+      - name: Capture public browser screenshots
+        run: xvfb-run -a --server-args="-screen 0 1440x900x24" node capture-deployed.mjs
+      - name: Upload genuine screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tasks-25-28-public-deployment
+          path: best-cars-dealership/evidence/deployed_*.png
+          retention-days: 14
