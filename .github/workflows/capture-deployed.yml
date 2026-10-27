@@ -1,0 +1,39 @@
+name: Capture real public deployment screenshots
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: 'Public HTTPS Render URL (such as https://example.onrender.com)'
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  screenshots:
+    name: Capture real deployed app screenshots
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: best-cars-dealership/server/frontend
+    env:
+      DEPLOY_URL: ${{ inputs.deployment_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install browser
+        run: |
+          npm install --no-audit --no-fund
+          npm install --no-save playwright
+          npx playwright install chromium --with-deps
+          sudo apt-get install -y xvfb scrot
+      - name: Capture actual public site
+        run: xvfb-run -a --server-args="-screen 0 1440x900x24" node capture-deployed.mjs
+      - name: Upload public deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coursera-real-deployment-evidence
+          path: best-cars-dealership/evidence/deployed_*.png
+          retention-days: 14
