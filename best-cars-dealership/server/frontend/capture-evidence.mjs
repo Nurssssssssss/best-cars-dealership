@@ -19,8 +19,7 @@ async function snap(name){
 try{
  await page.goto(base+'/',{waitUntil:'networkidle'});
  await page.locator('article').first().waitFor();
- await page.screenshot({path:resolve(out,'get_dealers.png'),fullPage:false});
- console.log('get_dealers',page.url());
+ await snap('get_dealers');
  await page.goto(base+'/login',{waitUntil:'networkidle'});
  await page.getByLabel('Username').fill('course_demo');
  await page.getByLabel('Password').fill(process.env.DEMO_PASSWORD);
@@ -51,4 +50,8 @@ try{
  await snap('admin_login');
  await page.locator('form[action*="logout"] button').first().click();
  await snap('admin_logout');
+ // Repeat the anonymous home screenshot once Chromium is fully visible.
+ await page.goto(base+'/',{waitUntil:'networkidle'});
+ await page.locator('article').first().waitFor();
+ await snap('get_dealers');
 }finally{await browser.close();}
