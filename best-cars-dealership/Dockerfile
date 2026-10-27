@@ -14,4 +14,4 @@ COPY --from=frontend /frontend/dist/ ./server/frontend/dist/
 WORKDIR /app/server
 RUN python manage.py collectstatic --noinput
 EXPOSE 8000
-CMD ["sh","-c","python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
+CMD ["sh","-c","python manage.py migrate --noinput && python manage.py seed_demo && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
