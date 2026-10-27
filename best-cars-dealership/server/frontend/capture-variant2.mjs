@@ -92,7 +92,15 @@ try {
   await page.getByRole('button',{name:'Logout'}).click();
   await page.getByRole('alert').getByText('You have successfully logged out.').waitFor({timeout:15000});
   await shot('logout');
-  writeFileSync(resolve(out,'deploymentURL.txt'),base+'\n');
+  await page.goto('https://github.com/Nurssssssssss/best-cars-dealership/actions/runs/40567878364',{waitUntil:'domcontentloaded',timeout:90000});
+  await page.waitForTimeout(2500);
+  const githubView=await page.locator('body').innerText();
+  if (githubView.includes('Lint Python Files') && githubView.includes('Lint JavaScript Files')) {
+    await shot('CICD');
+  } else {
+    console.log('GitHub dashboard unavailable: CICD screenshot not captured');
+  }
+  writeFileSync(resolve(out,'deploymentURL.txt'),base+'\\n');
 } finally {
   await browser.close();
 }
