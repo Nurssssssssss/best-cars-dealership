@@ -4,7 +4,19 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.http import Http404
 from django.views.static import serve
-urlpatterns=[path('admin/',admin.site.urls),path('api/',include('dealers.urls'))]
+from dealers import course_compat as course
+urlpatterns=[
+ path('admin/',admin.site.urls),
+ path('api/',include('dealers.urls')),
+ path('fetchDealers',course.fetch_dealers),
+ path('fetchDealer/<int:dealer_id>',course.fetch_dealer),
+ path('fetchDealers/<str:state>',course.fetch_dealers_by_state),
+ path('fetchReviews/dealer/<int:dealer_id>',course.fetch_reviews),
+ path('djangoapp/get_cars',course.get_cars),
+ path('djangoapp/login',course.course_login),
+ path('djangoapp/logout',course.course_logout),
+ path('analyze/<path:review_text>',course.analyze_text),
+]
 if __import__('os').environ.get('DJANGO_SERVE_REACT')=='1':
  from django.views.generic import View
  from django.http import FileResponse
