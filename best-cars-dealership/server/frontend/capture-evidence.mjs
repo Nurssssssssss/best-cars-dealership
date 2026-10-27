@@ -2,7 +2,7 @@ import {chromium} from 'playwright';
 import {execFileSync} from 'node:child_process';
 import {mkdirSync} from 'node:fs';
 import {resolve} from 'node:path';
-const base='http://127.0.0.1:5173';
+const base=process.env.FRONT_URL || 'http://127.0.0.1:5173';
 const out=resolve(process.cwd(),'../../evidence');
 mkdirSync(out,{recursive:true});
 const browser=await chromium.launch({headless:false,args:['--no-sandbox','--window-size=1380,860']});
