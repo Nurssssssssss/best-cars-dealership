@@ -42,4 +42,12 @@ try{
  await page.getByRole('button',{name:'Publish Review'}).click();
  await page.getByText('Fantastic services and a pleasant purchase experience').waitFor();
  await snap('added_review');
+ await page.goto('http://127.0.0.1:8000/admin/',{waitUntil:'networkidle'});
+ await page.locator('#id_username').fill('root');
+ await page.locator('#id_password').fill(process.env.ADMIN_PASSWORD);
+ await page.locator('input[type=submit]').click();
+ await page.getByText('Site administration').waitFor();
+ await snap('admin_login');
+ await page.locator('form[action*="logout"] button').first().click();
+ await snap('admin_logout');
 }finally{await browser.close();}
