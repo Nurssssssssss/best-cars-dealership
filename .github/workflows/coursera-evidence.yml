@@ -37,7 +37,7 @@ jobs:
           npm install --no-save playwright
           npm run build
           npx playwright install chromium --with-deps
-          sudo apt-get install -y xvfb scrot
+          sudo apt-get install -y xvfb scrot xterm xdotool
       - name: Prepare a temporary demo database
         run: |
           python server/manage.py migrate --noinput
