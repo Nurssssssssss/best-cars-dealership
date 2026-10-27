@@ -1,0 +1,1 @@
+This directory is intentionally empty of claimed execution logs and screenshots. Generate genuine evidence using the scripts and the running application. See docs/SUBMISSION_CHECKLIST.md.

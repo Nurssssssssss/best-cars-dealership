@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: best-cars
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: best-cars}
+  template:
+    metadata:
+      labels: {app: best-cars}
+    spec:
+      containers:
+        - name: django
+          image: REPLACE_WITH_YOUR_REGISTRY/best-cars:latest
+          ports: [{containerPort: 8000}]
+          env:
+            - name: DEBUG
+              value: "0"
+            - name: DJANGO_ALLOWED_HOSTS
+              value: "REPLACE_WITH_DEPLOYMENT_HOST"
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef: {name: best-cars-secrets, key: django-secret-key}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: best-cars
+spec:
+  selector: {app: best-cars}
+  ports: [{port: 80, targetPort: 8000}]
+  type: ClusterIP
