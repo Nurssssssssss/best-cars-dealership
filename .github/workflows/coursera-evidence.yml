@@ -43,7 +43,8 @@ jobs:
       - name: Start application
         run: |
           mkdir -p evidence
-          python server/manage.py runserver 0.0.0.0:8000 > evidence/django_server 2>&1 &
+          printf 'cd server && python3 manage.py runserver 0.0.0.0:8000\n' > evidence/django_server
+          (cd server && python3 manage.py runserver 0.0.0.0:8000) >> evidence/django_server 2>&1 &
           (cd server/frontend && npm run dev -- --host 0.0.0.0 > ../../evidence/vite_server 2>&1) &
           for i in $(seq 1 40); do
             if curl -fsS http://127.0.0.1:8000/fetchDealers >/dev/null && curl -fsS http://127.0.0.1:5173/ >/dev/null; then exit 0; fi
