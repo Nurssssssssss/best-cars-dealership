@@ -22,6 +22,7 @@ if frontend_assets.exists():
 DEFAULT_AUTO_FIELD='django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS=['http://localhost:5173','http://127.0.0.1:5173']
 CSRF_TRUSTED_ORIGINS=['http://localhost:5173','http://127.0.0.1:5173']
+SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTO','https')
 SESSION_COOKIE_HTTPONLY=True
 CSRF_COOKIE_HTTPONLY=False
 if not DEBUG:
